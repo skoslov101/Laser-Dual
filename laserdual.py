@@ -77,7 +77,7 @@ RESP_KEYS = ['left','right',QUIT_KEY]
 SLACK = dict(
         channel='#laserdual-exp',
         botname='{:s}'.format(SUBJ),
-        emoji=':poop:',
+        emoji=':lightsaber:',
         url='https://hooks.slack.com/services/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'
     ) if not DEV else None
 
