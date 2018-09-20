@@ -1,16 +1,11 @@
 
-from __future__ import absolute_import, division, print_function
-from psychopy import locale_setup, gui, visual, core, data, event, logging, clock
-from psychopy.constants import (NOT_STARTED, STARTED, PLAYING, PAUSED,
-                                STOPPED, FINISHED, PRESSED, RELEASED, FOREVER)
-import numpy as np  # whole numpy lib is available, prepend 'np.'
-from numpy import (sin, cos, tan, log, log10, pi, average,
-                   sqrt, std, deg2rad, rad2deg, linspace, asarray)
-from numpy.random import random, randint, normal, shuffle
-import os  # handy system and path functions
-import sys  # to get file system encoding
+import os
+import sys
 
-from psychopy import visual, core
+import numpy as np
+
+from psychopy import visual, core, event
+
 
 # open window
 win = visual.Window()
@@ -67,7 +62,9 @@ order = np.append(order,np.repeat('ng',NUM_NG))
 
 
 # keyboard setup parameters
-QUIT_KEY = 'q'BREAK_KEY = 'space'RESP_KEYS = ['left','right',QUIT_KEY]
+QUIT_KEY = 'q'
+BREAK_KEY = 'space'
+RESP_KEYS = ['left','right',QUIT_KEY]
 
 
 def generate_block():
@@ -182,10 +179,17 @@ for i in range(N_BLOCKS):
 #    return answer
    
 #        
-#keys = psychopy.event.waitKeys(#        keyList=["left", "right"],#        timeStamped=clock
+#keys = psychopy.event.waitKeys(
+#        keyList=["left", "right"],
+#        timeStamped=clock
 #        
-#for key in keys:#    if key[0] == "left":#        key_num = 1#    else:#        key_num = 2
-#        #    responses.append([key_num, key[1]])
+#for key in keys:
+#    if key[0] == "left":
+#        key_num = 1
+#    else:
+#        key_num = 2
+#        
+#    responses.append([key_num, key[1]])
         
         
 #    for j in range(N_MBLOCKS):
