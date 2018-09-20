@@ -17,11 +17,11 @@ args = parser.parse_args()
 SUBJ = args.subj
 
 # make a variable the tells program whether in "development" mode or not
-DEV = True if SUBJ == 's999' else False
+DEV = True if SUBJ in ['s999','sim'] else False
 
 ##  io  ##
 
-data_fname = './test.csv'
+data_fname = './data/{:s}_data.csv'.format(SUBJ)
 
 ##  define parameters  ##
 
@@ -48,6 +48,9 @@ TIMES = dict(
     iti      = 1.0, 
 )
 
+# make experiment fast if subj == 'sim'
+TIMES = { k: v/100 for k, v in TIMES.items() }
+
 # keyboard
 QUIT_KEY = 'q'
 BREAK_KEY = 'space'
@@ -57,7 +60,7 @@ RESP_KEYS = ['left','right',QUIT_KEY]
 
 ##  create master dataframe  ##
 
-columns = ['subj','trialType','response','rt','accuracy']
+columns = ['subj','trialType','cue','probe','response','rt','accuracy']
 index = pd.MultiIndex.from_product(
     [range(N_BLOCKS),range(N_BLOCK_TRIALS)],names=['block','trial'])
 df = pd.DataFrame(columns=columns,index=index)
@@ -125,6 +128,14 @@ def run_trial(run_num,trial_num):
     else:
         cue, probe = trial_type
 
+    # change cue/probe sometimes on AY and BX trials
+    if trial_type == 'AY':
+        # keep probe but change cue
+        cue = np.random.choice(['A','E','G','P','R','S'])
+    elif trial_type == 'BX':
+        # keep cue but change probe
+        probe = np.random.choice(['X','F','J','M','Q','U'])
+
     # choose the correct answer for the trial
     if trial_type == 'AX':
         answer = 'left'
@@ -179,8 +190,10 @@ def run_trial(run_num,trial_num):
     win.flip()
     core.wait(TIMES['iti'])
 
-    # save trial results into master dataframe
+    # insert trial results into master dataframe
     df.loc[(run_num,trial_num),['response','rt','accuracy']] = (char,rt,acc)
+    # insert unique cue/probe into master dataframe
+    df.loc[(run_num,trial_num),['cue','probe']] = (cue,probe)
 
 
 
@@ -190,7 +203,9 @@ for b in range(N_BLOCKS):
     # wait for subj to continue
     break_txtStim.draw()
     win.flip()
-    event.waitKeys(keyList=BREAK_KEY)
+    response = event.waitKeys(keyList=[BREAK_KEY,QUIT_KEY])
+    if QUIT_KEY in response:
+        sys.exit()
         
     # run through trials of the block
     for t in range(N_BLOCK_TRIALS):
@@ -201,4 +216,7 @@ for b in range(N_BLOCKS):
 
 
 #Byee##
-#end(goodbye_text="Thank you for participating in our experiment!", goodbye_delay=5000)
+break_txtStim.text = 'Byee'
+break_txtStim.draw()
+win.flip()
+core.wait(2)
