@@ -131,7 +131,7 @@ win = visual.Window(fullscr=DEV^1)
 cue_txtStim   = visual.TextStim(win)
 probe_txtStim = visual.TextStim(win)
 fixStim       = visual.TextStim(win, text='+')
-break_txtStim = visual.TextStim(win, text='Press space bar to continue. This yo brake.')
+break_txtStim = visual.TextStim(win, text='Press space bar to continue.')
 fdbck_txtStim = visual.TextStim(win, text='+++')
 iti_txtStim   = visual.TextStim(win, text='+++')
 
