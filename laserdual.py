@@ -49,7 +49,8 @@ TIMES = dict(
 )
 
 # make experiment fast if subj == 'sim'
-TIMES = { k: v/100 for k, v in TIMES.items() }
+if SUBJ == 'sim':
+    TIMES = { k: v/100 for k, v in TIMES.items() }
 
 # keyboard
 QUIT_KEY = 'q'
