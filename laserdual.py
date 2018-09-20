@@ -100,7 +100,7 @@ win = visual.Window(fullscr=DEV^1)
 # create psychopy stims
 cue_txtStim   = visual.TextStim(win)
 probe_txtStim = visual.TextStim(win)
-fixStim       = visual.TextStim(win, text='+++')
+fixStim       = visual.TextStim(win, text='+')
 break_txtStim = visual.TextStim(win, text='Press space bar to continue. This yo brake.')
 fdbck_txtStim = visual.TextStim(win, text='+++')
 iti_txtStim   = visual.TextStim(win, text='+++')
@@ -119,7 +119,11 @@ def run_trial(run_num,trial_num):
     trial_type = df.loc[(run_num,trial_num),'trialType']
     # break apart the trial type into cue and probe
     # (eg, break AX into A and X)
-    cue, probe = trial_type
+    if trial_type == 'NG':
+        cue = np.random.choice(['A','B'])
+        probe = np.random.choice([1,2,3,4,5,6,7,8,9])
+    else:
+        cue, probe = trial_type
 
     # choose the correct answer for the trial
     if trial_type == 'AX':
