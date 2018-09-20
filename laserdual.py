@@ -3,6 +3,7 @@ import os
 import sys
 import argparse
 import numpy as np
+import pandas as pd
 
 from psychopy import visual, core, event
 
@@ -20,21 +21,53 @@ SUBJ = args.subj
 ##  define parameters  ##
 
 N_BLOCKS  = 4
-N_MBLOCKS = 20
-N_TRIALS  = 48 # per miniblock
+
+# choose number of each trial type FOR A SINGLE BLOCK
+N_TRIALS = dict(
+    ax=20,
+    ay= 5,
+    bx= 5,
+    by=20,
+    ng=12,
+)
+
+N_TOTAL_TRIALS = sum(N_TRIALS.values())
 
 # trial timing (all in seconds)
 TIMES = dict(
-    encoding=0.5,
-    delay=4.5,
-    probe=0.5,
-    iti=1.0, # response allowed during iti
+    encoding = 0.5,
+    delay    = 4.5,
+    probe    = 0.5,
+    iti      = 1.0, # response allowed during iti
 )
 
 # keyboard
 QUIT_KEY = 'q'
 BREAK_KEY = 'space'
 RESP_KEYS = ['left','right',QUIT_KEY]
+
+
+
+##  create master dataframe  ##
+
+columns = ['subj','trialType','response','rt','accuracy']
+index = pd.MultiIndex.from_product(
+    [range(N_BLOCKS),range(N_TOTAL_TRIALS)],names=['block','trial'])
+df = pd.DataFrame(columns=columns,index=index)
+
+# Fill in the trialType columns with equal
+# randomization of trials within each block.
+# First make a big list of all the trial types,
+# and then shuffle it and insert for each block.
+
+trial_types_list = np.concatenate(
+    [ np.repeat(k,v) for k, v in N_TRIALS.items() ])
+
+for b in range(N_BLOCKS):
+    df.loc[b,'trialType'] = np.random.permutation(trial_types_list)
+
+# add subj to dataframe
+df['subj'] = SUBJ
 
 
 
@@ -57,25 +90,6 @@ breakTxtStim = visual.TextStim(win, text='Press space bar to continue. This yo b
 
 iti_txtStim=visual.TextStim(win, text='+++')
 
-##Block param##
-PCT_AX = 0.4
-PCT_AY = 0.1
-PCT_BX = 0.1
-PCT_BY = 0.4
-PCT_NG = 0.2
-
-
-NUM_AX = round(N_MBLOCKS*PCT_AX)
-NUM_AY = round(N_MBLOCKS*PCT_AY)
-NUM_BX = round(N_MBLOCKS*PCT_BX)
-NUM_BY = round(N_MBLOCKS*PCT_BY)
-NUM_NG = round(N_MBLOCKS*PCT_NG)
-
-order = np.repeat('ax',NUM_AX)
-order = np.append(order,np.repeat('ay',NUM_AY))
-order = np.append(order,np.repeat('bx',NUM_BX))
-order = np.append(order,np.repeat('by',NUM_BY))
-order = np.append(order,np.repeat('ng',NUM_NG))
 
 
 
