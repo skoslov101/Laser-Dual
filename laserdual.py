@@ -16,15 +16,34 @@ args = parser.parse_args()
 SUBJ = args.subj
 
 
+
+##  define parameters  ##
+
+N_BLOCKS  = 4
+N_MBLOCKS = 20
+N_TRIALS  = 48 # per miniblock
+
+# trial timing (all in seconds)
+TIMES = dict(
+    encoding=0.5,
+    delay=4.5,
+    probe=0.5,
+    iti=1.0, # response allowed during iti
+)
+
+# keyboard
+QUIT_KEY = 'q'
+BREAK_KEY = 'space'
+RESP_KEYS = ['left','right',QUIT_KEY]
+
+
+
 # open window
 win = visual.Window()
 
 
 
 ######## open section to define a parameter
-iti =  (5)
-isi= (1)
-N_BLOCKS = 4
 
 
 
@@ -39,14 +58,12 @@ breakTxtStim = visual.TextStim(win, text='Press space bar to continue. This yo b
 iti_txtStim=visual.TextStim(win, text='+++')
 
 ##Block param##
-N_MBLOCKS = 20
 PCT_AX = 0.4
 PCT_AY = 0.1
 PCT_BX = 0.1
 PCT_BY = 0.4
 PCT_NG = 0.2
 
-N_TRIALS = 48 # per miniblock
 
 NUM_AX = round(N_MBLOCKS*PCT_AX)
 NUM_AY = round(N_MBLOCKS*PCT_AY)
@@ -61,10 +78,6 @@ order = np.append(order,np.repeat('by',NUM_BY))
 order = np.append(order,np.repeat('ng',NUM_NG))
 
 
-# keyboard setup parameters
-QUIT_KEY = 'q'
-BREAK_KEY = 'space'
-RESP_KEYS = ['left','right',QUIT_KEY]
 
 
 def generate_block():
