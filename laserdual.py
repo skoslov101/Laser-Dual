@@ -16,6 +16,8 @@ args = parser.parse_args()
 
 SUBJ = args.subj
 
+# make a variable the tells program whether in "development" mode or not
+DEV = True if SUBJ == 's999' else False
 
 
 ##  define parameters  ##
@@ -60,64 +62,42 @@ df = pd.DataFrame(columns=columns,index=index)
 # First make a big list of all the trial types,
 # and then shuffle it and insert for each block.
 
-trial_types_list = np.concatenate(
+tTypes_list = np.concatenate(
     [ np.repeat(k,v) for k, v in N_TRIALS.items() ])
 
 for b in range(N_BLOCKS):
-    df.loc[b,'trialType'] = np.random.permutation(trial_types_list)
+
+    # shuffle the trial types
+    np.random.shuffle(tTypes_list)
+
+    # PREVENT three consecutive same trial types
+    threepeat = True
+    while threepeat:
+        np.random.shuffle(tTypes_list)
+        for x, y, z in zip(tTypes_list,tTypes_list[1:],tTypes_list[2:]):
+            if x == y == z:
+                threepeat = True
+
+    # insert the winner into dataframe for current block
+    df.loc[b,'trialType'] = tTypes_list
+
 
 # add subj to dataframe
 df['subj'] = SUBJ
 
 
 
-# open window
-win = visual.Window()
+##  open psychopy window  ##
 
+win = visual.Window(fullscr=DEV^1)
 
-
-######## open section to define a parameter
-
-
-
-#### create psychopy stims
-## question equals what?
-cue_txtStim = visual.TextStim(win)
+# create psychopy stims
+cue_txtStim   = visual.TextStim(win)
 probe_txtStim = visual.TextStim(win)
-fixStim = visual.TextStim(win, text='+++')
-breakTxtStim = visual.TextStim(win, text='Press space bar to continue. This yo brake.')
-#probe_txtStim= probe
+fixStim       = visual.TextStim(win, text='+++')
+break_txtStim = visual.TextStim(win, text='Press space bar to continue. This yo brake.')
+iti_txtStim   = visual.TextStim(win, text='+++')
 
-iti_txtStim=visual.TextStim(win, text='+++')
-
-
-
-
-
-def generate_block():
-    MINIBLOCKS_PER_BLOCK = 2
-    total_order = np.array([])
-    for block in range(MINIBLOCKS_PER_BLOCK):
-        shuffle_order = order.copy()
-        # shuffle order of categories within a run
-        # prevent three consecutive category miniblocks
-        threepeat = True
-        while threepeat:
-            threepeat = False
-            np.random.shuffle(shuffle_order)
-            for x, y, z in zip(shuffle_order,shuffle_order[1:],shuffle_order[2:]):
-                if x == y == z:
-                    threepeat = True
-        total_order = np.append(total_order, shuffle_order)
-    return total_order
-
-#def check_if_order_valid(shuffle_order):
-#    test_tuples = zip(shuffle_order,shuffle_order[1:],shuffle_order[2:])
-#    for tup in range(len(shuffle_order)):
-#        test_value = all(test_tuples[index]==np.repeat(test_tuples[index][0],3))
-#        if test_value:
-#            return False
-#    return True
 
 
 ##############################################################
