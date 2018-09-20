@@ -14,6 +14,7 @@ To run a supafast simulated version, use subject_id sim.
 
 import os
 import sys
+import requests
 import argparse
 import numpy as np
 import pandas as pd
@@ -72,6 +73,14 @@ QUIT_KEY = 'q'
 BREAK_KEY = 'space'
 RESP_KEYS = ['left','right',QUIT_KEY]
 
+# slack
+SLACK = dict(
+        channel='#laserdual-exp',
+        botname='{:s}'.format(SUBJ),
+        emoji=':poop:',
+        url='https://hooks.slack.com/services/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'
+    ) if not DEV else None
+
 
 ###############################
 ##  create master dataframe  ##
@@ -127,9 +136,9 @@ fdbck_txtStim = visual.TextStim(win, text='+++')
 iti_txtStim   = visual.TextStim(win, text='+++')
 
 
-################################
-##  define run trial function ##
-################################
+##################################
+##  define experiment functions ##
+##################################
 
 # define function used to run a single trial
 def run_trial(run_num,trial_num):
@@ -212,9 +221,19 @@ def run_trial(run_num,trial_num):
     df.loc[(run_num,trial_num),['cue','probe']] = (cue,probe)
 
 
+def slackit(msg):
+    print msg
+    if SLACK:
+        payload = dict(text=msg,channel=SLACK['channel'],username=SLACK['botname'],icon_emoji=SLACK['emoji'])
+        try: requests.post(json=payload,url=SLACK['url'])
+        except ConnectionError: print 'Slack messaging failed--no internet connection.'
+
+
 ######################
 ##  RUN EXPERIMENT  ##
 ######################
+
+slackit('Started experiment.')
 
 for b in range(N_BLOCKS):
     
@@ -230,6 +249,9 @@ for b in range(N_BLOCKS):
         run_trial(b,t)
         # save after every trial
         df.to_csv(data_fname,na_rep=np.nan)
+
+    # send end of block slack message
+    slackit('Finished block {:d}'.format(b+1))
 
 
 
