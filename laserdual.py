@@ -1,3 +1,16 @@
+'''
+Hello. This is the display script for laserdual.
+
+To run a subject, move to this directory
+and call this script from terminal with:
+
+$ python laserdual.py --subj <subject_id>
+
+(subject_id should be in s999 format)
+
+To run a demo, use subject_id s999.
+To run a supafast simulated version, use subject_id sim.
+'''
 
 import os
 import sys
