@@ -19,6 +19,9 @@ SUBJ = args.subj
 # make a variable the tells program whether in "development" mode or not
 DEV = True if SUBJ == 's999' else False
 
+##  io  ##
+
+data_fname = './test.csv'
 
 ##  define parameters  ##
 
@@ -33,15 +36,16 @@ N_TRIALS = dict(
     NG=12,
 )
 
-N_TOTAL_TRIALS = sum(N_TRIALS.values())
+N_BLOCK_TRIALS = sum(N_TRIALS.values()) # per block
 
 # trial timing (all in seconds)
 TIMES = dict(
     fixation = 0.5,
     cue      = 0.5,
     delay    = 4.5,
-    probe    = 0.5,
-    iti      = 1.0, # response allowed during iti
+    probe    = 1.5,
+    feedback = 0.5,
+    iti      = 1.0, 
 )
 
 # keyboard
@@ -55,7 +59,7 @@ RESP_KEYS = ['left','right',QUIT_KEY]
 
 columns = ['subj','trialType','response','rt','accuracy']
 index = pd.MultiIndex.from_product(
-    [range(N_BLOCKS),range(N_TOTAL_TRIALS)],names=['block','trial'])
+    [range(N_BLOCKS),range(N_BLOCK_TRIALS)],names=['block','trial'])
 df = pd.DataFrame(columns=columns,index=index)
 
 # Fill in the trialType columns with equal
@@ -74,6 +78,7 @@ for b in range(N_BLOCKS):
     # PREVENT three consecutive same trial types
     threepeat = True
     while threepeat:
+        threepeat = False
         np.random.shuffle(tTypes_list)
         for x, y, z in zip(tTypes_list,tTypes_list[1:],tTypes_list[2:]):
             if x == y == z:
@@ -97,6 +102,7 @@ cue_txtStim   = visual.TextStim(win)
 probe_txtStim = visual.TextStim(win)
 fixStim       = visual.TextStim(win, text='+++')
 break_txtStim = visual.TextStim(win, text='Press space bar to continue. This yo brake.')
+fdbck_txtStim = visual.TextStim(win, text='+++')
 iti_txtStim   = visual.TextStim(win, text='+++')
 
 
@@ -106,27 +112,7 @@ iti_txtStim   = visual.TextStim(win, text='+++')
 ##############################################################
 
 
-
-# run stuff#
-def get_trial_parameters(trial_type):
-    cue, probe = trial_type
-    if trial_type == 'ax':
-        answer = 'left'
-    elif trial_type == 'ng':
-        answer = None
-    else:
-        answer = 'right'
-    return (cue, probe, answer)
-
-
-#run_trial(trial_order[trial])
-#def run_trial(trial_type):
-
-
-
-### run through experiment
-# loop through runs and trial
-
+# define function used to run a single trial
 def run_trial(run_num,trial_num):
 
     # extract the trial type from master dataframe
@@ -147,9 +133,6 @@ def run_trial(run_num,trial_num):
     cue_txtStim.text = cue
     probe_txtStim.text = probe
 
-    # reset the color of iti stim (bc it changes with response feedback)
-    iti_txtStim.setColor('white')
-
     # show fixation
     fixStim.draw()
     win.flip()
@@ -163,43 +146,42 @@ def run_trial(run_num,trial_num):
     core.wait(TIMES['delay'])
 
     # show probe and collect response
+    probe_txtStim.draw()
+    win.flip()
     response = None
     t0 = core.getTime()
-    while core.getTime()-t0 < TIMES['probe']+TIMES['iti']:
-        if (response is None) and (core.getTime()-t0 < TIMES['probe']):
-            probe_txtStim.draw()
-        else:
-            iti_txtStim.draw()
+    response = event.waitKeys(maxWait=TIMES['probe'],keyList=RESP_KEYS,timeStamped=True)
 
-        if response is None:
-            ### THIS IS BAD BC RTS WILL NOT BE CONTINUOUS
-            response = event.getKeys(keyList=RESP_KEYS)[0]
-            # handle response
-            if response == 'q':
-                sys.exit() # quit program
-            elif response == answer:
-                acc = True
-                iti_txtStim.setColor('green')
-            else:
-                acc = False
-                iti_txtStim.setColor('red')
-
-        win.flip()
-
-    # handle situation when that didn't respond
+    # handle response
     if response is None:
-        if trial_type == 'NG':
-            acc = True:
-        else:
-            acc = False
+        char, rt = np.nan, np.nan
+        acc = True if trial_type == 'NG' else False
+    else:
+        char, time = response[0]
+        if char == 'q':
+            sys.exit() # quit
+        rt = time - t0
+        acc = True if char == answer else False
 
-    # save response into master dataframe
-    df.loc[(run_num,trial_num),['respose','rt','accuracy']] = (response,rt,acc)
+    # show feedback
+    feedback_color = 'green' if acc else 'red'
+    fdbck_txtStim.setColor(feedback_color)
+    fdbck_txtStim.draw()
+    win.flip()
+    core.wait(TIMES['feedback'])
+
+    # show iti
+    iti_txtStim.draw()
+    win.flip()
+    core.wait(TIMES['iti'])
+
+    # save trial results into master dataframe
+    df.loc[(run_num,trial_num),['response','rt','accuracy']] = (char,rt,acc)
 
 
 
 ##  RUN EXPERIMENT  ##
-for i in range(N_BLOCKS):
+for b in range(N_BLOCKS):
     
     # wait for subj to continue
     break_txtStim.draw()
@@ -207,9 +189,11 @@ for i in range(N_BLOCKS):
     event.waitKeys(keyList=BREAK_KEY)
         
     # run through trials of the block
-    for b in range(N_BLOCKS):
-        for t in range(N_TOTAL_TRIALS):
-            run_trial(b,t)
+    for t in range(N_BLOCK_TRIALS):
+        run_trial(b,t)
+        # save after every trial
+        df.to_csv(data_fname,na_rep=np.nan)
+
 
 
 #Byee##
