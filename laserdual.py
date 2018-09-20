@@ -20,10 +20,12 @@ SUBJ = args.subj
 DEV = True if SUBJ in ['s999','sim'] else False
 
 ##  io  ##
-
 data_fname = './data/{:s}_data.csv'.format(SUBJ)
 
+
+#########################
 ##  define parameters  ##
+#########################
 
 N_BLOCKS  = 4
 
@@ -58,8 +60,9 @@ BREAK_KEY = 'space'
 RESP_KEYS = ['left','right',QUIT_KEY]
 
 
-
+###############################
 ##  create master dataframe  ##
+###############################
 
 columns = ['subj','trialType','cue','probe','response','rt','accuracy']
 index = pd.MultiIndex.from_product(
@@ -96,8 +99,9 @@ for b in range(N_BLOCKS):
 df['subj'] = SUBJ
 
 
-
+############################
 ##  open psychopy window  ##
+############################
 
 win = visual.Window(fullscr=DEV^1)
 
@@ -110,11 +114,9 @@ fdbck_txtStim = visual.TextStim(win, text='+++')
 iti_txtStim   = visual.TextStim(win, text='+++')
 
 
-
-##############################################################
-##  make keyboard functions to aid in collecting responses  ##
-##############################################################
-
+################################
+##  define run trial function ##
+################################
 
 # define function used to run a single trial
 def run_trial(run_num,trial_num):
@@ -197,8 +199,10 @@ def run_trial(run_num,trial_num):
     df.loc[(run_num,trial_num),['cue','probe']] = (cue,probe)
 
 
-
+######################
 ##  RUN EXPERIMENT  ##
+######################
+
 for b in range(N_BLOCKS):
     
     # wait for subj to continue
@@ -216,7 +220,10 @@ for b in range(N_BLOCKS):
 
 
 
-#Byee##
+############
+##  Byee  ##
+############
+
 break_txtStim.text = 'Byee'
 break_txtStim.draw()
 win.flip()
