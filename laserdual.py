@@ -1,23 +1,23 @@
 
 import os
 import sys
-
+import argparse
 import numpy as np
 
 from psychopy import visual, core, event
 
 
+# handle input arguments
+parser = argparse.ArgumentParser()
+parser.add_argument('--subj',default='s999',type=str,help='subject in s999 format')
+args = parser.parse_args()
+
+
+SUBJ = args.subj
+
+
 # open window
 win = visual.Window()
-
-# Store info about the experiment session
-expName = 'LaserDual' 
-expInfo = {'participant': '', 'session': '001'}
-dlg = gui.DlgFromDict(dictionary=expInfo, title=expName)
-if dlg.OK == False:
-    core.quit()  
-expInfo['date'] = data.getDateStr()  # add timestamp
-expInfo['expName'] = expName
 
 
 
