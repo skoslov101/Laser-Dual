@@ -26,18 +26,19 @@ N_BLOCKS  = 4
 
 # choose number of each trial type FOR A SINGLE BLOCK
 N_TRIALS = dict(
-    ax=20,
-    ay= 5,
-    bx= 5,
-    by=20,
-    ng=12,
+    AX=20,
+    AY= 5,
+    BX= 5,
+    BY=20,
+    NG=12,
 )
 
 N_TOTAL_TRIALS = sum(N_TRIALS.values())
 
 # trial timing (all in seconds)
 TIMES = dict(
-    encoding = 0.5,
+    fixation = 0.5,
+    cue      = 0.5,
     delay    = 4.5,
     probe    = 0.5,
     iti      = 1.0, # response allowed during iti
@@ -126,83 +127,89 @@ def get_trial_parameters(trial_type):
 ### run through experiment
 # loop through runs and trial
 
-def run_trial(cue,probe):
-    # show fixation (empty)
+def run_trial(run_num,trial_num):
+
+    # extract the trial type from master dataframe
+    trial_type = df.loc[(run_num,trial_num),'trialType']
+    # break apart the trial type into cue and probe
+    # (eg, break AX into A and X)
+    cue, probe = trial_type
+
+    # choose the correct answer for the trial
+    if trial_type == 'AX':
+        answer = 'left'
+    elif trial_type == 'NG':
+        answer = None
+    else:
+        answer = 'right'
+
+    # change the cue and probe stims to have right text
+    cue_txtStim.text = cue
+    probe_txtStim.text = probe
+
+    # reset the color of iti stim (bc it changes with response feedback)
+    iti_txtStim.setColor('white')
+
+    # show fixation
     fixStim.draw()
     win.flip()
-    core.wait(1)
+    core.wait(TIMES['fixation'])
     # show cue
-    cue_txtStim.text = cue
     cue_txtStim.draw()
     win.flip()
-    core.wait(1)
+    core.wait(TIMES['cue'])
     # show delay
     win.flip()
-    core.wait(5)
-    # show probe
-    probe_txtStim.text = probe
-    probe_txtStim.draw()
-    win.flip()
-    # response collection #
-    response = event.waitKeys(maxWait=1,keyList=RESP_KEYS)
-    if response == 'q':
-        # quit program
-        win.close(); sys.exit()
-    elif response is not None:
-        response = response[0]
-        
-    # iti
-    iti_txtStim.draw
-    win.flip()
-    core.wait(1)
-    
-    return response
+    core.wait(TIMES['delay'])
 
-# initialize empty response list
-response_list = []
+    # show probe and collect response
+    response = None
+    t0 = core.getTime()
+    while core.getTime()-t0 < TIMES['probe']+TIMES['iti']:
+        if (response is None) and (core.getTime()-t0 < TIMES['probe']):
+            probe_txtStim.draw()
+        else:
+            iti_txtStim.draw()
+
+        if response is None:
+            ### THIS IS BAD BC RTS WILL NOT BE CONTINUOUS
+            response = event.getKeys(keyList=RESP_KEYS)[0]
+            # handle response
+            if response == 'q':
+                sys.exit() # quit program
+            elif response == answer:
+                acc = True
+                iti_txtStim.setColor('green')
+            else:
+                acc = False
+                iti_txtStim.setColor('red')
+
+        win.flip()
+
+    # handle situation when that didn't respond
+    if response is None:
+        if trial_type == 'NG':
+            acc = True:
+        else:
+            acc = False
+
+    # save response into master dataframe
+    df.loc[(run_num,trial_num),['respose','rt','accuracy']] = (response,rt,acc)
 
 
-## RUN EXPERIMENT ##
+
+##  RUN EXPERIMENT  ##
 for i in range(N_BLOCKS):
     
     # wait for subj to continue
-    breakTxtStim.draw()
+    break_txtStim.draw()
     win.flip()
     event.waitKeys(keyList=BREAK_KEY)
-    
-    # generate random trial order
-    trial_order = generate_block()
-    
+        
     # run through trials of the block
-    for trial_type in trial_order:
-        # get trial info
-        cue, probe, answer = get_trial_parameters(trial_type)
-        # run single trial
-        response = run_trial(cue,probe)
-        # add response to list of responses
-        response_list.append(response)
-        print(response_list)
-        
-#    return answer
-   
-#        
-#keys = psychopy.event.waitKeys(
-#        keyList=["left", "right"],
-#        timeStamped=clock
-#        
-#for key in keys:
-#    if key[0] == "left":
-#        key_num = 1
-#    else:
-#        key_num = 2
-#        
-#    responses.append([key_num, key[1]])
-        
-        
-#    for j in range(N_MBLOCKS):
-#        for k in range(N_TRIALS):
-#            print (i,j,k)
-
+    for b in range(N_BLOCKS):
+        for t in range(N_TOTAL_TRIALS):
+            run_trial(b,t)
 
 
 #Byee##
