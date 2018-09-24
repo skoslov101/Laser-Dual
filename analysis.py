@@ -7,6 +7,7 @@ import seaborn as sns
 data frame look like dis: 
 columns = ['subj','trialType','cue','probe','response','rt','accuracy']
 '''
+
 from Dual-Laser import data
 dataframe = pd.read_csv('data.csv', skiprows=1)
 grouped_df = dataframe.groupby(['trialType'])
@@ -17,6 +18,7 @@ data=dataframe)
  
 save_fig = viol_ax.get_figure()
 sns.plt.show()
+
 
 ##How many samples from distributution
 nsamples= 50
