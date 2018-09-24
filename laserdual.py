@@ -11,6 +11,7 @@ $ python laserdual.py --subj <subject_id>
 To run a demo, use subject_id s999.
 To run a supafast simulated version, use subject_id sim.
 '''
+from __future__ import print_function
 
 import os
 import sys
@@ -222,11 +223,11 @@ def run_trial(run_num,trial_num):
 
 
 def slackit(msg):
-    print msg
+    print(msg)
     if SLACK:
         payload = dict(text=msg,channel=SLACK['channel'],username=SLACK['botname'],icon_emoji=SLACK['emoji'])
         try: requests.post(json=payload,url=SLACK['url'])
-        except ConnectionError: print 'Slack messaging failed--no internet connection.'
+        except ConnectionError: print('Slack messaging failed--no internet connection.')
 
 
 ######################
