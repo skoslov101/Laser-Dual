@@ -7,9 +7,13 @@ import seaborn as sns
 data frame look like dis: 
 columns = ['subj','trialType','cue','probe','response','rt','accuracy']
 '''
+#########################
+working function to graph 
+RT by trialtype!!!
+#########################
 
-from Dual-Laser import data
-dataframe = pd.read_csv('data.csv', skiprows=1)
+from Laser-Dual import data
+dataframe = pd.read_csv('data.csv')
 grouped_df = dataframe.groupby(['trialType'])
 print grouped_df['rt'].describe().unstack()
 
@@ -17,8 +21,9 @@ viol_ax = sns.violinplot(x="trialType", y="rt", palette='colorblind',
 data=dataframe)
  
 save_fig = viol_ax.get_figure()
-sns.plt.show()
+plt.show()
 
+#################################
 
 ##How many samples from distributution
 nsamples= 50
