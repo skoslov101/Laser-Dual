@@ -13,7 +13,7 @@ RT by trialtype!!!
 #########################
 
 from Laser-Dual import data
-dataframe = pd.read_csv('data.csv')
+dataframe = pd.read_csv('{:s}_data.csv')
 grouped_df = dataframe.groupby(['trialType'])
 print grouped_df['rt'].describe().unstack()
 
