@@ -23,6 +23,23 @@ data=dataframe)
 save_fig = viol_ax.get_figure()
 plt.show()
 
+
+#Group data by trial type & subject number. 
+#Then get mean RT for the trial types
+grouped_sub = dataframe.groupby(['trialtype', 'SUBJ'])
+means = grouped_sub['RT'].mean()
+
+# Assign RT values to x and y
+x, y = means['incongruent'].values, means['congruent'].values
+t_value = paired_ttest(x, y)
+
+
+# loop through t-value
+for key, value in t_value.iteritems():
+    t_value[key] = round(value, 3)
+ 
+print t_value
+
 #################################
 
 ##How many samples from distributution
