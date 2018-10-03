@@ -24,6 +24,10 @@ save_fig = viol_ax.get_figure()
 plt.show()
 
 
+viol_acc = sns.violinplot(x="trialType", y="accuracy", palette='colorblind',
+data=dataframe)
+
+
 #Group data by trial type & subject number. 
 #Then get mean RT for the trial types
 grouped_sub = dataframe.groupby(['trialtype', 'SUBJ'])
@@ -42,7 +46,22 @@ print t_value
 
 #################################
 
-##How many samples from distributution
+'''
+what measures do we want - 
+NEED 2 BRUSHUP STATS STAT.
+
+1. PBI = (AY-BX)/(AY+BX)
+	- measure of the interference during AY and BX trials.
+
+2. A-cue bias = 1/2*(Z[H] + Z[F])
+	- provide a measure of the tendency of participants to make a target response after an A cue
+
+3. d’-context = hits on AX trials and false alarms on BX trials (Z(H) - Z(F))
+	- measure the ability of participants to employ contextual information from the cue to guide their answer to the probe.
+'''
+
+
+## number of samples from distributution
 nsamples= 50
 
 samples = np.random.poisson(lam=4, size=n_samples)
@@ -57,11 +76,9 @@ bins = np.arange(np.max(samples) + 1)
 ## veusz is a plotter which plots a function on the graph
 embed = veusz.embed.Embedded("veusz")
 
-page = embed.Root.Add("page")
-page.width.val = "8.4cm"
-page.height.val = "6cm"
+#page = embed.Root.Add("page")
 
-##autoadd false because we will create the axes in the graph ourselves.
+##autoadd false because we will create the axes in the graph manually.
 graph = page.Add("graph", autoadd=False)
 
 x_axis = graph.Add("axis")
@@ -85,9 +102,9 @@ y_axis.label.val = "Count"
 
 
 ##comparing 2sample t test 
-n_per_group = 30
+n_per_group = 25
 
-# effect size = 0.8
+# effect size = tbd
 group_means = [0.0, 0.8]
 group_sigmas = [1.0, 1.0]
 
