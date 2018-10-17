@@ -46,11 +46,11 @@ N_BLOCKS  = 4
 
 # choose number of each trial type FOR A SINGLE BLOCK
 N_TRIALS = dict(
-    AX=20,
-    AY= 5,
-    BX= 5,
-    BY=20,
-    NG=12,
+    AX=16,
+    AY= 4,
+    BX= 4,
+    BY=16,
+    NG=8,
 )
 
 N_BLOCK_TRIALS = sum(N_TRIALS.values()) # per block
