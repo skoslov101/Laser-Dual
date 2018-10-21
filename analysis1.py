@@ -1,17 +1,13 @@
-import numpy as np
+﻿import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
-<<<<<<< HEAD
 from scipy.stats import t
-=======
->>>>>>> d7ec4a501a1d516953bbb44d3f8a1ad6f6d99dfc
 
 '''
 data frame look like dis: 
 columns = ['subj','trialType','cue','probe','response','rt','accuracy']
 '''
-<<<<<<< HEAD
 
 from Laser-Dual import data
 
@@ -51,49 +47,23 @@ print grouped_df['rt'].describe().unstack()
 
 viol_ax = sns.violinplot(x="trialType", y="rt", palette='colorblind',
 data=df)
-=======
-#########################
-working function to graph 
-RT by trialtype!!!
-#########################
-
-from Laser-Dual import data
-dataframe = pd.read_csv('{:s}_data.csv')
-grouped_df = dataframe.groupby(['trialType'])
-print grouped_df['rt'].describe().unstack()
-
-viol_ax = sns.violinplot(x="trialType", y="rt", palette='colorblind',
-data=dataframe)
->>>>>>> d7ec4a501a1d516953bbb44d3f8a1ad6f6d99dfc
  
 save_fig = viol_ax.get_figure()
 plt.show()
 
 
 viol_acc = sns.violinplot(x="trialType", y="accuracy", palette='colorblind',
-<<<<<<< HEAD
 data=df)
-=======
-data=dataframe)
->>>>>>> d7ec4a501a1d516953bbb44d3f8a1ad6f6d99dfc
 
 
 #Group data by trial type & subject number. 
 #Then get mean RT for the trial types
-<<<<<<< HEAD
 grouped_sub = df.groupby(['trialType', 'subj'])
 means = grouped_sub['rt'].mean()
 
 # Assign RT values to x and y
 x, y = means['AX'].values, means['BX'].values
 
-=======
-grouped_sub = dataframe.groupby(['trialtype', 'SUBJ'])
-means = grouped_sub['RT'].mean()
-
-# Assign RT values to x and y
-x, y = means['incongruent'].values, means['congruent'].values
->>>>>>> d7ec4a501a1d516953bbb44d3f8a1ad6f6d99dfc
 t_value = paired_ttest(x, y)
 
 
@@ -157,33 +127,3 @@ bar.lengths.val = "bin_counts"
 x_axis.label.val = "Value"
 y_axis.label.val = "Count"
 
-<<<<<<< HEAD
-=======
-
-
-
-##comparing 2sample t test 
-n_per_group = 25
-
-# effect size = tbd
-group_means = [0.0, 0.8]
-group_sigmas = [1.0, 1.0]
-
-n_groups = len(group_means)
-
-data = np.empty([n_per_group, n_groups])
-data.fill(np.nan)
-
-for i_group in range(n_groups):
-
-    data[:, i_group] = np.random.normal(
-        loc=group_means[i_group],
-        scale=group_sigmas[i_group],
-        size=n_per_group)
-
-assert np.sum(np.isnan(data)) == 0
-
-
-embed.WaitForClose()
-
->>>>>>> d7ec4a501a1d516953bbb44d3f8a1ad6f6d99dfc

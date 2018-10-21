@@ -47,11 +47,11 @@ N_BLOCKS  = 4
 
 # choose number of each trial type FOR A SINGLE BLOCK
 N_TRIALS = dict(
-    AX=20,
-    AY= 5,
-    BX= 5,
-    BY=20,
-    NG=12,
+    AX=16,
+    AY= 4,
+    BX= 4,
+    BY=16,
+    NG=8,
 )
 
 N_BLOCK_TRIALS = sum(N_TRIALS.values()) # per block
@@ -261,7 +261,10 @@ for b in range(N_BLOCKS):
 ##  Byee  ##
 ############
 
-break_txtStim.text = 'Thank you for participating! Please return to experimentor.'
+<<<<<<< HEAD
+
+break_txtStim.text = 'Thanks for participating in the study. Please return to experimenter.'
+>>>>>>> d7ec4a501a1d516953bbb44d3f8a1ad6f6d99dfc
 break_txtStim.draw()
 win.flip()
 core.wait(2)
