@@ -11,6 +11,7 @@ $ python laserdual.py --subj <subject_id>
 To run a demo, use subject_id s999.
 To run a supafast simulated version, use subject_id sim.
 '''
+
 from __future__ import print_function
 
 import os
@@ -260,7 +261,7 @@ for b in range(N_BLOCKS):
 ##  Byee  ##
 ############
 
-break_txtStim.text = 'Byee'
+break_txtStim.text = 'Thank you for participating! Please return to experimentor.'
 break_txtStim.draw()
 win.flip()
 core.wait(2)
