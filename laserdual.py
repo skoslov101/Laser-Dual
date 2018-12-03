@@ -286,10 +286,10 @@ for b in range(N_BLOCKS):
 ##  Byee  ##
 ############
 
-#<<<<<<< HEAD
+
 
 break_txtStim.text = 'Thanks for participating in the study. Please return to experimenter.'
-#>>>>>>> d7ec4a501a1d516953bbb44d3f8a1ad6f6d99dfc
+
 break_txtStim.draw()
 win.flip()
 core.wait(2)
