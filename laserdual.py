@@ -60,9 +60,10 @@ N_BLOCK_TRIALS = sum(N_TRIALS.values()) # per block
 TIMES = dict(
     fixation = 0.5,
     cue      = 0.5,
-    delay    = 4.5,
-    probe    = 1.5,
-    feedback = 0.5,
+    delay    = 3.5,
+    probe    = 0.5,
+    probe2   = 1.0,
+    feedback = 1.5,
     iti      = 1.0, 
 )
 
@@ -130,12 +131,13 @@ df['subj'] = SUBJ
 win = visual.Window(fullscr=DEV^1)
 
 # create psychopy stims
-cue_txtStim   = visual.TextStim(win)
-probe_txtStim = visual.TextStim(win)
-fixStim       = visual.TextStim(win, text='+')
+cue_txtStim   = visual.TextStim(win, height=0.3, color='blue', bold=True)
+probe_txtStim = visual.TextStim(win, height=0.3, bold=True)
+probe2_txtStim = visual.TextStim(win, text='+++', height=0.3)
+fixStim       = visual.TextStim(win, text='+', height=0.3)
 break_txtStim = visual.TextStim(win, text='Press space bar to continue.')
-fdbck_txtStim = visual.TextStim(win, text='+++')
-iti_txtStim   = visual.TextStim(win, text='+++')
+fdbck_txtStim = visual.TextStim(win, text='+++', height=0.3)
+iti_txtStim   = visual.TextStim(win, text='+', height=0.3)
 
 
 ##################################
@@ -150,7 +152,7 @@ def run_trial(run_num,trial_num):
     # break apart the trial type into cue and probe
     # (eg, break AX into A and X)
     if trial_type == 'NG':
-        cue = np.random.choice(['A','B'])
+        cue = ngList.pop(0)
         probe = np.random.choice([1,2,3,4,5,6,7,8,9])
     else:
         cue, probe = trial_type
@@ -158,10 +160,14 @@ def run_trial(run_num,trial_num):
     # change cue/probe sometimes on AY and BX trials
     if trial_type == 'AY':
         # keep probe but change cue
-        cue = np.random.choice(['A','E','G','P','R','S'])
+        probe = np.random.choice(['F','J','M','Q','U'])
+    
     elif trial_type == 'BX':
         # keep cue but change probe
-        probe = np.random.choice(['X','F','J','M','Q','U'])
+        cue = np.random.choice(['E','G','P','R','S'])
+    elif trial_type == 'BY':
+        cue = np.random.choice(['E','G','P','R','S'])
+        probe = np.random.choice(['F','J','M','Q','U'])
 
     # choose the correct answer for the trial
     if trial_type == 'AX':
@@ -196,8 +202,21 @@ def run_trial(run_num,trial_num):
 
     # handle response
     if response is None:
-        char, rt = np.nan, np.nan
-        acc = True if trial_type == 'NG' else False
+        # char, rt = np.nan, np.nan
+        # acc = True if trial_type == 'NG' else False
+        # second half of probe period
+        probe2_txtStim.draw()
+        win.flip()
+        response = event.waitKeys(maxWait=TIMES['probe2'],keyList=RESP_KEYS,timeStamped=True)
+        if response is None:
+            char, rt = np.nan, np.nan
+            acc = True if trial_type == 'NG' else False
+        else:
+            char, time = response[0]
+            if char == 'q':
+                sys.exit() # quit
+            rt = time - t0
+            acc = True if char == answer else False
     else:
         char, time = response[0]
         if char == 'q':
@@ -238,6 +257,12 @@ def slackit(msg):
 slackit('Started experiment.')
 
 for b in range(N_BLOCKS):
+
+    noB=np.random.choice(['E','G','P','R','S'],4,replace=False)
+    ngList=np.append(noB, ['A', 'A', 'A', 'A'])
+    np.random.shuffle(ngList)
+    ngList=list(ngList)
+
     
     # wait for subj to continue
     break_txtStim.draw()
@@ -261,10 +286,10 @@ for b in range(N_BLOCKS):
 ##  Byee  ##
 ############
 
-<<<<<<< HEAD
+#<<<<<<< HEAD
 
 break_txtStim.text = 'Thanks for participating in the study. Please return to experimenter.'
->>>>>>> d7ec4a501a1d516953bbb44d3f8a1ad6f6d99dfc
+#>>>>>>> d7ec4a501a1d516953bbb44d3f8a1ad6f6d99dfc
 break_txtStim.draw()
 win.flip()
 core.wait(2)
