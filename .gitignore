@@ -1,5 +1,3 @@
-
+#I just want to ignore the data folder for now
+/data
 .DS_Store
-
-data/sim_data.csv
-data/s999_data.csv
