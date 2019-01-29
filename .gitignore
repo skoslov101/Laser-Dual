@@ -1,3 +1,3 @@
 #I just want to ignore the data folder for now
-data/
+data/*
 .DS_Store
