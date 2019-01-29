@@ -37,6 +37,7 @@ DEV = True if SUBJ in ['s999','sim'] else False
 
 ##  io  ##
 data_fname = './data/{:s}_data.csv'.format(SUBJ)
+dropbox_fname = '~/DropBox (LewPeaLab)/BEHAVIOR/LaserDual/{:s}_data.csv'.format(SUBJ)
 
 
 #########################
@@ -93,6 +94,7 @@ columns = ['subj','trialType','cue','probe','response','rt','accuracy']
 index = pd.MultiIndex.from_product(
     [range(N_BLOCKS),range(N_BLOCK_TRIALS)],names=['block','trial'])
 df = pd.DataFrame(columns=columns,index=index)
+
 
 # Fill in the trialType columns with equal
 # randomization of trials within each block.
@@ -276,6 +278,7 @@ for b in range(N_BLOCKS):
         run_trial(b,t)
         # save after every trial
         df.to_csv(data_fname,na_rep=np.nan)
+        df.to_csv(dropbox_fname,na_rep=np.nan)
 
     # send end of block slack message
     slackit('Finished block {:d}'.format(b+1))

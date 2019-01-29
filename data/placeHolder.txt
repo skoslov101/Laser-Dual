@@ -1,0 +1,1 @@
+#Git doesn't allow empty folders, so we are going to just put a placeholder in it so that this folder doesn't get erased from the repo, but so that data doesn't go up to the repo also.

@@ -1,3 +1,6 @@
 #I just want to ignore the data folder for now
-data/
+data/*
 .DS_Store
+
+#Exception to the rule so that we can keep the data folder
+!data/placeHolder.txt
