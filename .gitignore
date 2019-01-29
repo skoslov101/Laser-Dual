@@ -3,4 +3,4 @@ data/*
 .DS_Store
 
 #Exception to the rule so that we can keep the data folder
-!data/paceHolder.txt
+!data/placeHolder.txt
