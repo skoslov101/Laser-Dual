@@ -37,7 +37,7 @@ DEV = True if SUBJ in ['s999','sim'] else False
 
 ##  io  ##
 data_fname = './data/{:s}_data.csv'.format(SUBJ)
-dropbox_fname = '~/DropBox (LewPeaLab)/BEHAVIOR/LaserDual{:s}_data.csv'.format(SUBJ)
+dropbox_fname = '~/DropBox (LewPeaLab)/BEHAVIOR/LaserDual/{:s}_data.csv'.format(SUBJ)
 
 
 #########################
