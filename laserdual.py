@@ -27,10 +27,25 @@ from psychopy import visual, core, event
 # handle input arguments
 parser = argparse.ArgumentParser()
 parser.add_argument('--subj',default='s999',type=str,help='subject in s999 format')
+parser.add_argument('--cond',default=3,type=int,help='input condition 1/2')
+#1 is sham and 2 is laser.
 args = parser.parse_args()
 
 
 SUBJ = args.subj
+
+if args.cond==1:
+	COND = "Sham"
+elif args.cond==2:
+	COND = "Laser"
+else:
+	COND = "Unknown"
+	
+	
+	
+	
+	
+	
 
 # make a variable the tells program whether in "development" mode or not
 DEV = True if SUBJ in ['s999','sim'] else False
@@ -90,7 +105,7 @@ SLACK = dict(
 ##  create master dataframe  ##
 ###############################
 
-columns = ['subj','trialType','cue','probe','response','rt','accuracy']
+columns = ['subj','trialType','cue','probe','response','rt','accuracy','condition']
 index = pd.MultiIndex.from_product(
     [range(N_BLOCKS),range(N_BLOCK_TRIALS)],names=['block','trial'])
 df = pd.DataFrame(columns=columns,index=index)
@@ -124,6 +139,7 @@ for b in range(N_BLOCKS):
 
 # add subj to dataframe
 df['subj'] = SUBJ
+df['condition']=COND
 
 
 ############################
